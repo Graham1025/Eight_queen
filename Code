@@ -1,0 +1,63 @@
+//栈和递归的实现2：八皇后问题，系统将整个程序运行时所需的数据空间安排在一个栈中，函数一层一层调用函数过程中，就在栈顶加空间，“后调用先返回”的弹栈过程
+#include<stdio.h>
+#define N 8  //确定皇后位数
+
+void Set_queen(int i, int *sum, int(*a)[N]) {
+	int R;  //按列取元素
+	int C;  //按行取元素
+	int m;  //皇后将投放的具体位置
+	int n;  //循环参数
+	if (N - 1 == i) {
+		for (m = 0; m < N; m++)
+		{
+			if (0 == a[N - 1][m]) {
+				a[N - 1][m] = 10 * N + N;
+				++*sum;
+				printf("第%d种算法如下：\n", *sum);
+				for (C = 0; C < N; C++)
+				{
+					for (R = 0; R < N; R++)
+						printf("%d ", a[C][R]);
+					printf("\n");
+				}
+				printf("\n");
+			}
+		}
+	}
+	else {
+		for (m = 0; m < N; m++)
+		{
+			int b[N][N] = { 0 };
+			for (C = 0; C < N; C++)
+				for (R = 0; R < N; R++)
+					b[C][R] = a[C][R];
+			if (0 == b[i][m]) {
+				b[i][m] = 10 * (i + 1) + (i + 1);
+				//横排赋值
+				for (n = 0; n < N; n++)
+					if (0 == b[i][n]) b[i][n] = i + 1;
+				//竖排赋值
+				for (n = i; n < N; n++)
+					if (0 == b[n][m]) b[n][m] = i + 1;
+				//左斜赋值
+				for (n = 0; m - n >= 0 && i + n < N; n++)
+					if (0 == b[i + n][m - n]) b[i + n][m - n] = i + 1;
+				//右斜赋值
+				for (n = 0; m + n < N && i + n < N; n++)
+					if (0 == b[i + n][m + n]) b[i + n][m + n] = i + 1;
+				Set_queen(i + 1, sum, b);
+			}
+		}
+	}
+}
+
+int main()
+{
+	int a[N][N] = { 0 };
+	int i = 0;
+	int sum = 0;
+	printf("%d皇后问题计算方法如下...\n\n", N);
+	Set_queen(i, &sum, a);
+	printf("%d皇后问题有%d种摆法\n", N, sum);
+	getchar();
+}
